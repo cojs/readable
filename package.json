@@ -24,7 +24,7 @@
     "co-mocha": "1",
     "contributors": "*",
     "eslint": "1",
-    "istanbul-harmony": "~0.3.16",
+    "istanbul-harmony": "0",
     "mocha": "2"
   },
   "homepage": "https://github.com/cojs/co-readable",

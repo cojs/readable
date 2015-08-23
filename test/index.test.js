@@ -58,6 +58,20 @@ describe('index.test.js', function () {
     assert.equal(size, totalSize);
   });
 
+  it('should read(stream) work', function* () {
+    const stream = fs.createReadStream(bigfile);
+
+    let buf;
+    let size = 0;
+    let count = 0;
+    while (buf = yield readable.read(stream)) {
+      size += buf.length;
+      count++;
+    }
+    console.log('total read %d bytes, %d times', size, count);
+    assert.equal(size, totalSize);
+  });
+
   it('should read empty file', function* () {
     const read = readable(fs.createReadStream(path.join(__dirname, 'emptyfile')));
 
@@ -82,5 +96,13 @@ describe('index.test.js', function () {
     } catch (err) {
       assert.equal(err.message, 'ENOENT: no such file or directory, open \'not-exists-file\'');
     }
+  });
+
+  describe('readAll()', function () {
+    it('should read all data into one buffer', function* () {
+      const buf = yield readable.readAll(fs.createReadStream(bigfile));
+      console.log('total read %d bytes', buf.length);
+      assert.equal(buf.length, totalSize);
+    });
   });
 });

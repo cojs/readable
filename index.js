@@ -17,26 +17,44 @@
 const destroy = require('destroy');
 
 module.exports = function readable(stream) {
-  return function* read(size) {
-    const buf = stream.read(size);
-    if (buf) {
-      return buf;
-    }
-
-    // wait for next readable and try again
-    const result = yield any(stream, ['readable', 'end', 'error']);
-    if (result.event === 'end') {
-      destroy(stream);
-      return;
-    }
-    if (result.event === 'error') {
-      destroy(stream);
-      throw result.data;
-    }
-
-    return yield read(size);
+  return function* (size) {
+    return yield read(stream, size);
   };
 };
+
+module.exports.read = read;
+module.exports.readAll = readAll;
+
+function* read(stream, size) {
+  const buf = stream.read(size);
+  if (buf) {
+    return buf;
+  }
+
+  // wait for next readable and try again
+  const result = yield any(stream, ['readable', 'end', 'error']);
+  if (result.event === 'end') {
+    destroy(stream);
+    return;
+  }
+  if (result.event === 'error') {
+    destroy(stream);
+    throw result.data;
+  }
+
+  return yield read(stream, size);
+}
+
+function* readAll(stream) {
+  const buffers = [];
+  let buf;
+  let size = 0;
+  while (buf = yield read(stream)) {
+    buffers.push(buf);
+    size += buf.length;
+  }
+  return Buffer.concat(buffers, size);
+}
 
 function any(stream, events) {
   return function (done) {

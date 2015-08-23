@@ -57,7 +57,20 @@ co(function* () {
 
 ### `readable.all(stream)`
 
-TBD
+Read all data into one buffer.
+
+```js
+const fs = require('fs');
+const readable = require('co-readable');
+const co = require('co');
+
+co(function* () {
+  const buf = yield readable.readAll(fs.createReadStream('bigfile'));
+  console.log('total read %d bytes', buf.length);
+}).catch(function (err) {
+  console.error(err.stack);
+});
+```
 
 ## License
 
