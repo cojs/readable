@@ -55,7 +55,7 @@ co(function* () {
 });
 ```
 
-### `readable.all(stream)`
+### `readable.readAll(stream)`
 
 Read all data into one buffer.
 
