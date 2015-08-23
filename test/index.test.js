@@ -43,6 +43,21 @@ describe('index.test.js', function () {
     assert.equal(count, 512 + 1);
   });
 
+  it('should read without size piece by piece', function* () {
+    const read = readable(fs.createReadStream(bigfile));
+
+    let buf;
+    let size = 0;
+    let count = 0;
+    while (buf = yield read()) {
+      console.log('read %d bytes', buf.length);
+      size += buf.length;
+      count++;
+    }
+    console.log('total read %d bytes, %d times', size, count);
+    assert.equal(size, totalSize);
+  });
+
   it('should read empty file', function* () {
     const read = readable(fs.createReadStream(path.join(__dirname, 'emptyfile')));
 

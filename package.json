@@ -1,7 +1,7 @@
 {
   "name": "co-readable",
-  "version": "0.0.0",
-  "description": "co-readable",
+  "version": "1.0.0",
+  "description": "Easy way to read stream data with co",
   "main": "index.js",
   "files": [
     "index.js"
@@ -38,7 +38,12 @@
     "email": "m@fengmk2.com"
   },
   "keywords": [
-    "co-readable"
+    "co-readable",
+    "co",
+    "readable",
+    "read",
+    "readstream",
+    "readall"
   ],
   "engines": {
     "node": ">=0.12.0"
