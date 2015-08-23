@@ -46,7 +46,7 @@
     "readall"
   ],
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=1.0.0"
   },
   "author": "fengmk2 <m@fengmk2.com> (http://fengmk2.com)",
   "license": "MIT"
