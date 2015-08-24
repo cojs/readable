@@ -16,12 +16,14 @@
     "contributors": "contributors -f plain -o AUTHORS"
   },
   "dependencies": {
+    "debug": "~2.2.0",
     "destroy": "~1.0.3"
   },
   "devDependencies": {
     "autod": "*",
     "co": "4",
     "co-mocha": "1",
+    "co-sleep": "0.0.1",
     "contributors": "*",
     "eslint": "1",
     "istanbul-harmony": "0",

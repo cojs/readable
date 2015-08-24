@@ -15,41 +15,72 @@
  */
 
 const destroy = require('destroy');
+const debug = require('debug')('co-readable');
 
-module.exports = function readable(stream) {
-  return function* (size) {
-    return yield read(stream, size);
-  };
-};
-
-module.exports.read = read;
+module.exports = readable;
 module.exports.readAll = readAll;
 
-function* read(stream, size) {
-  const buf = stream.read(size);
-  if (buf) {
-    return buf;
+function readable(stream) {
+  let error = null;
+  let closed = false;
+  stream.on('error', onerror);
+  stream.on('close', onclose);
+
+  function onerror(err) {
+    debug('stream error: %s', err);
+    error = err;
   }
 
-  // wait for next readable and try again
-  const result = yield any(stream, ['readable', 'end', 'error']);
-  if (result.event === 'end') {
-    destroy(stream);
-    return;
-  }
-  if (result.event === 'error') {
-    destroy(stream);
-    throw result.data;
+  function onclose() {
+    debug('stream close');
+    closed = true;
   }
 
-  return yield read(stream, size);
+  function cleanup() {
+    destroy(stream);
+    stream.removeListener('error', onerror);
+    stream.removeListener('close', onclose);
+  }
+
+  return function* read(size) {
+    if (error) {
+      cleanup();
+      throw error;
+    }
+
+    if (closed) {
+      cleanup();
+      return;
+    }
+
+    const buf = stream.read(size);
+    if (buf) {
+      return buf;
+    }
+
+    // wait for next readable and try again
+    const result = yield any(stream, ['readable', 'end', 'error', 'close']);
+    debug('got stream %s', result.event);
+    if (result.event === 'end' || result.event === 'close') {
+      cleanup();
+      return;
+    }
+    if (result.event === 'error') {
+      cleanup();
+      throw result.data;
+    }
+
+    // got readable event
+    return yield read(size);
+  };
 }
 
 function* readAll(stream) {
+  const read = readable(stream);
   const buffers = [];
   let buf;
   let size = 0;
-  while (buf = yield read(stream)) {
+  while (buf = yield read()) {
     buffers.push(buf);
     size += buf.length;
   }
