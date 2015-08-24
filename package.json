@@ -1,6 +1,6 @@
 {
   "name": "co-readable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easy way to read stream data with co",
   "main": "index.js",
   "files": [
