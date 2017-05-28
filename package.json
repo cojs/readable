@@ -16,7 +16,7 @@
     "contributors": "contributors -f plain -o AUTHORS"
   },
   "dependencies": {
-    "debug": "~2.2.0",
+    "debug": "~2.6.7",
     "destroy": "~1.0.3"
   },
   "devDependencies": {
